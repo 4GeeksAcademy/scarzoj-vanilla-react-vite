@@ -20,6 +20,9 @@ export const LandingPage = () => {
                         <Grid size={4}>
                             <BasicCard></BasicCard>
                         </Grid>
+                        <Grid size={4}>
+                            <BasicCard></BasicCard>
+                        </Grid>
                     </Grid>
                 </Container>
             </Container>
