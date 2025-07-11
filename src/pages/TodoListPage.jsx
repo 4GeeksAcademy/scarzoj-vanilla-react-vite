@@ -1,135 +1,156 @@
 import { isEmpty } from "lodash";
 import { useState } from "react";
 import {
-  Badge,
-  Col,
-  Container,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  ListGroupItem,
-  Row,
-} from "react-bootstrap";
+  Box,
+  Grid,
+  TextField,
+  List,
+  ListItemText,
+  IconButton,
+  Typography,
+  Paper,
+  InputAdornment,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export const TodoListPage = () => {
   const initialListItems = [
-    {
-      task: "Wash dishes",
-      id: crypto.randomUUID(),
-    },
-    {
-      task: "Clean clothes",
-      id: crypto.randomUUID(),
-    },
+    { task: "Wash dishes", id: crypto.randomUUID() },
+    { task: "Clean clothes", id: crypto.randomUUID() },
   ];
 
   const [listItems, setListItems] = useState(initialListItems);
   const [inputValue, setInputValue] = useState("");
-  const [currentlyHighlighted, setCurrentlyHighlighted] = useState("");
+  const [inputError, setInputError] = useState("");
 
-  const createItem = (itemTask) => {
-    const newItemId = crypto.randomUUID();
-    const newItems = listItems.concat({
-      task: itemTask,
-      id: newItemId,
-    });
-    setListItems(newItems);
+  const createItem = (task) => {
+    const newItem = { task, id: crypto.randomUUID() };
+    setListItems((prev) => [...prev, newItem]);
   };
 
-  const deleteItem = (itemId) => {
-    const filteredItems = listItems.filter((listItem) => {
-      return listItem.id !== itemId;
-    });
-    setListItems(filteredItems);
+  const deleteItem = (id) => {
+    setListItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const isInputValueValid = () => {
-    const isFilled = inputValue;
-    const isSemantic = inputValue.replace(/\s/g, "");
-    return isFilled && isSemantic;
+  const clearInput = () => {
+    setInputValue("");
+    setInputError("");
   };
 
-  const captureEnter = (keyDown) => {
-    if (keyDown === "Enter" && isInputValueValid() && listItems.length < 10) {
-      createItem(inputValue);
-      setInputValue("");
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      const trimmed = inputValue.trim();
+      const isDuplicate = listItems.some(
+        (item) => item.task.toLowerCase() === trimmed.toLowerCase()
+      );
+
+      if (!trimmed) {
+        setInputError("Task cannot be empty.");
+        return;
+      }
+
+      if (isDuplicate) {
+        setInputError("Task already exists.");
+        return;
+      }
+
+      if (listItems.length >= 10) {
+        setInputError("Maximum of 10 tasks allowed.");
+        return;
+      }
+
+      createItem(trimmed);
+      clearInput();
     }
   };
 
   return (
-    <Container
-      style={{
+    <Box
+      sx={{
         display: "flex",
-        height: "100vh",
+        minHeight: "100vh",
         flexDirection: "column",
         justifyContent: "center",
+        alignItems: "center",
+        px: 2,
       }}
     >
-      <Row className="justify-content-md-center">
-        <Col xs={4}>
-          <h3>todos:</h3>
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center mt-2">
-        <Col xs={4}>
-          <InputGroup>
-            <FormControl
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => captureEnter(e.key)}
-              placeholder="Enter new Task"
-            />
-          </InputGroup>
-        </Col>
-      </Row>
-      <Row className="justify-content-md-center mt-4">
-        <Col xs={4}>
-          <ListGroup>
+      <Grid container justifyContent="center">
+        <Grid item xs={12} sm={6} md={4}>
+          <Typography variant="h5" gutterBottom>
+            todos:
+          </Typography>
+          <TextField
+            fullWidth
+            placeholder="Enter new Task"
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              if (inputError) setInputError("");
+            }}
+            onKeyDown={handleKeyDown}
+            variant="outlined"
+            error={!!inputError}
+            helperText={inputError}
+            InputProps={{
+              endAdornment: inputValue && (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearInput} size="small">
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <List sx={{ mt: 2 }}>
             {!isEmpty(listItems) ? (
-              listItems.map((listItem) => {
-                return (
-                  <ListGroupItem
-                    key={listItem.id}
-                    className="d-flex justify-content-between align-items-start"
-                    onMouseEnter={() => setCurrentlyHighlighted(listItem.id)}
-                    onMouseLeave={() => setCurrentlyHighlighted("")}
+              listItems.map((item) => (
+                <Paper
+                  key={item.id}
+                  elevation={1}
+                  sx={{
+                    my: 1,
+                    px: 2,
+                    py: 1,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    "&:hover .delete-btn": {
+                      visibility: "visible",
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={item.task}
+                    sx={{
+                      userSelect: "none",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <IconButton
+                    className="delete-btn"
+                    edge="end"
+                    size="small"
+                    onClick={() => deleteItem(item.id)}
+                    aria-label="delete"
+                    sx={{
+                      visibility: "hidden",
+                      transition: "visibility 0.2s ease-in-out",
+                    }}
                   >
-                    <div
-                      style={{
-                        pointerEvents: "none",
-                        userSelect: "none",
-                      }}
-                    >
-                      {listItem.task}
-                    </div>
-                    <Badge
-                      bg="light"
-                      text="dark"
-                      onClick={() => deleteItem(listItem.id)}
-                      pill
-                      style={{
-                        cursor: "pointer",
-                        visibility:
-                          currentlyHighlighted === listItem.id
-                            ? "visible"
-                            : "hidden",
-                        userSelect: "none",
-                      }}
-                    >
-                      X
-                    </Badge>
-                  </ListGroupItem>
-                );
-              })
+                    <CloseIcon />
+                  </IconButton>
+                </Paper>
+              ))
             ) : (
-              <ListGroupItem className="d-flex justify-content-between align-items-start">
-                <div>No tasks, add a task</div>
-              </ListGroupItem>
+              <Paper sx={{ my: 1, px: 2, py: 1 }}>
+                <Typography>No tasks, add a task</Typography>
+              </Paper>
             )}
-          </ListGroup>
-        </Col>
-      </Row>
-    </Container>
+          </List>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
