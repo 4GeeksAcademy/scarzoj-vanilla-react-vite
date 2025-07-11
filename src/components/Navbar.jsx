@@ -1,11 +1,8 @@
 import { AppBar, Box, Toolbar, Typography, Button, IconButton } from '@mui/material';
-
-
 import MenuIcon from '@mui/icons-material/Menu';
-
 import { pages } from '../utils/pages';
 
-export const NavBar = ({ setActivePage }) => {
+export const NavBar = ({ activePage, setActivePage }) => {
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -23,12 +20,21 @@ export const NavBar = ({ setActivePage }) => {
                         News
                     </Typography>
                     {pages.map((page, i) => {
+                        const isActive = activePage === page.route;
                         return (
-                            <Button key={i} color="inherit" sx={{ marginRight: "16px" }} onClick={() => { setActivePage(page.route) }}>{page.name}</Button>
-                        )
+                            <Button
+                                key={i}
+                                color={isActive ? "primary" : "secondary"}
+                                variant={"contained"}
+                                sx={{ marginRight: "16px" }}
+                                onClick={() => setActivePage(page.route)}
+                            >
+                                {page.name}
+                            </Button>
+                        );
                     })}
                 </Toolbar>
             </AppBar>
         </Box>
     );
-}
+};
