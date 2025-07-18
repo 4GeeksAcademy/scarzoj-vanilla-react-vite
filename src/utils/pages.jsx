@@ -1,5 +1,6 @@
 import { LandingPage } from "../pages/LandingPage"
 import { TodoListPage } from "../pages/TodoListPage"
+import { TodoListFetchPage } from "../pages/TodoListFetchPage"
 import { CounterPage } from "../pages/CounterPage"
 
 export const pages = [
@@ -17,5 +18,10 @@ export const pages = [
         name: "Todo",
         route: "todo",
         component: <TodoListPage />
+    },
+    {
+        name: "Todo Fetch",
+        route: "todo-fetch",
+        component: <TodoListFetchPage />
     },
 ]
