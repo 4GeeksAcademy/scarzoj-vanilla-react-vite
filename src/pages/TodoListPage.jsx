@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -13,24 +13,43 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ClearIcon from "@mui/icons-material/Clear";
+import { getItemsList } from "../services/api/users";
+import { createItemReq, deleteItemReq } from "../services/api/todos";
 
 export const TodoListPage = () => {
-  const initialListItems = [
-    { task: "Wash dishes", id: crypto.randomUUID() },
-    { task: "Clean clothes", id: crypto.randomUUID() },
-  ];
-
-  const [listItems, setListItems] = useState(initialListItems);
+  const [listItems, setListItems] = useState();
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
+  const [user] = useState("ScarzoJ")
+
+  const refreshData = (userId) => {
+    getItemsList(userId)
+      .then((datos) => {
+        setListItems(datos)
+      })
+  }
+
+  useEffect(() => {
+    refreshData(user)
+  }, [])
 
   const createItem = (task) => {
-    const newItem = { task, id: crypto.randomUUID() };
-    setListItems((prev) => [...prev, newItem]);
+    const requestBody = {
+      "label": task,
+      "is_done": false
+    }
+
+    createItemReq(user, requestBody)
+      .then(() => {
+        refreshData(user)
+      })
   };
 
   const deleteItem = (id) => {
-    setListItems((prev) => prev.filter((item) => item.id !== id));
+    deleteItemReq(id)
+      .then(() => {
+        refreshData(user)
+      })
   };
 
   const clearInput = () => {
@@ -42,7 +61,7 @@ export const TodoListPage = () => {
     if (e.key === "Enter") {
       const trimmed = inputValue.trim();
       const isDuplicate = listItems.some(
-        (item) => item.task.toLowerCase() === trimmed.toLowerCase()
+        (item) => item.label.toLowerCase() === trimmed.toLowerCase()
       );
 
       if (!trimmed) {
@@ -122,7 +141,7 @@ export const TodoListPage = () => {
                   }}
                 >
                   <ListItemText
-                    primary={item.task}
+                    primary={item.label}
                     sx={{
                       userSelect: "none",
                       pointerEvents: "none",

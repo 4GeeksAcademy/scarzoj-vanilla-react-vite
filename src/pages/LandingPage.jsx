@@ -1,7 +1,9 @@
-import { Button, Container, Grid, Paper, Typography } from "@mui/material"
+import { Button, Container, Grid, Typography } from "@mui/material"
 import { BasicCard } from "../components/Card"
 
 export const LandingPage = () => {
+
+
     return (
         <>
             <Container>
