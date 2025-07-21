@@ -1,8 +1,12 @@
 import { AppBar, Box, Toolbar, Typography, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+
+import { useNavigate } from "react-router";
+
 import { pages } from '../utils/pages';
 
-export const NavBar = ({ activePage, setActivePage }) => {
+export const NavBar = () => {
+    let navigate = useNavigate()
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -20,14 +24,13 @@ export const NavBar = ({ activePage, setActivePage }) => {
                         News
                     </Typography>
                     {pages.map((page, i) => {
-                        const isActive = activePage === page.route;
                         return (
+                            page.showNavigation &&
                             <Button
                                 key={i}
-                                color={isActive ? "primary" : "secondary"}
                                 variant={"contained"}
                                 sx={{ marginRight: "16px" }}
-                                onClick={() => setActivePage(page.route)}
+                                onClick={() => navigate(page.route)}
                             >
                                 {page.name}
                             </Button>

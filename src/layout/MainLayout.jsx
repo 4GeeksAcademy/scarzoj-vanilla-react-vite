@@ -8,7 +8,9 @@ export const MainLayout = () => {
     return (
         <>
             <NavBar activePage={activePage} setActivePage={setActivePage} />
-            {pages.find((page) => activePage === page.route).component}
+            {pages.find((page) => {
+                return activePage === page.route
+            }).component}
         </>
     )
 }
