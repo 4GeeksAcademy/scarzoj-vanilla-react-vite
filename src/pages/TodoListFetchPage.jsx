@@ -20,36 +20,33 @@ export const TodoListFetchPage = () => {
   const [listItems, setListItems] = useState();
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
-  const [user] = useState("ScarzoJ")
+  const [user] = useState("ScarzoJ");
 
   const refreshData = (userId) => {
-    getItemsList(userId)
-      .then((datos) => {
-        setListItems(datos)
-      })
-  }
+    getItemsList(userId).then((datos) => {
+      setListItems(datos);
+    });
+  };
 
   useEffect(() => {
-    refreshData(user)
-  }, [])
+    refreshData(user);
+  }, []);
 
   const createItem = (task) => {
     const requestBody = {
-      "label": task,
-      "is_done": false
-    }
+      label: task,
+      is_done: false,
+    };
 
-    createItemReq(user, requestBody)
-      .then(() => {
-        refreshData(user)
-      })
+    createItemReq(user, requestBody).then(() => {
+      refreshData(user);
+    });
   };
 
   const deleteItem = (id) => {
-    deleteItemReq(id)
-      .then(() => {
-        refreshData(user)
-      })
+    deleteItemReq(id).then(() => {
+      refreshData(user);
+    });
   };
 
   const clearInput = () => {
@@ -61,7 +58,7 @@ export const TodoListFetchPage = () => {
     if (e.key === "Enter") {
       const trimmed = inputValue.trim();
       const isDuplicate = listItems.some(
-        (item) => item.label.toLowerCase() === trimmed.toLowerCase()
+        (item) => item.label.toLowerCase() === trimmed.toLowerCase(),
       );
 
       if (!trimmed) {

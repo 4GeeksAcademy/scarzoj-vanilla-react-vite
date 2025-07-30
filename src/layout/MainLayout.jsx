@@ -1,16 +1,18 @@
-import { useState } from "react"
-import { NavBar } from "../components/Navbar"
-import { pages } from "../utils/pages"
+import { useState } from "react";
+import { NavBar } from "../components/Navbar";
+import { pages } from "../utils/pages";
 
 export const MainLayout = () => {
-    const [activePage, setActivePage] = useState("landing")
+  const [activePage, setActivePage] = useState("landing");
 
-    return (
-        <>
-            <NavBar activePage={activePage} setActivePage={setActivePage} />
-            {pages.find((page) => {
-                return activePage === page.route
-            }).component}
-        </>
-    )
-}
+  return (
+    <>
+      <NavBar activePage={activePage} setActivePage={setActivePage} />
+      {
+        pages.find((page) => {
+          return activePage === page.route;
+        }).component
+      }
+    </>
+  );
+};

@@ -1,4 +1,4 @@
-import { NavBar } from "./components/Navbar"
+import { NavBar } from "./components/Navbar";
 
 import { Routes, Route } from "react-router";
 import { pages } from "./utils/pages";
@@ -9,12 +9,10 @@ export const App = () => {
     <>
       <NavBar />
       <Routes>
-        {pages.map((page)=>{
-          return (
-            <Route path={page.route} element={page.component}/>
-          )
+        {pages.map((page) => {
+          return <Route path={page.route} element={page.component} />;
         })}
-        <Route path="*" element={<LandingPage/>}/>
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </>
   );
